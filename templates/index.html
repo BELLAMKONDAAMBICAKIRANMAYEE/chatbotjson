@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .chat-box {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .chat-log {
+            background-color: #f1f1f1;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            height: 300px;
+            overflow-y: auto;
+        }
+        .chat-log p {
+            margin: 5px 0;
+        }
+        .user-message {
+            text-align: right;
+            color: blue;
+        }
+        .bot-response {
+            text-align: left;
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-box">
+        <div class="chat-log" id="chat-log">
+            <!-- Chat messages will be displayed here -->
+        </div>
+        <form id="chat-form">
+            <input type="text" id="user-input" placeholder="Type your message..." required>
+            <button type="submit">Send</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('chat-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const userInput = document.getElementById('user-input').value;
+
+            // Display user message
+            const chatLog = document.getElementById('chat-log');
+            chatLog.innerHTML += `<p class="user-message">${userInput}</p>`;
+            document.getElementById('user-input').value = '';
+
+            // Send the message to the server
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({message: userInput}),
+            });
+
+            const data = await response.json();
+
+            // Display bot response
+            chatLog.innerHTML += `<p class="bot-response">${data.response}</p>`;
+            chatLog.scrollTop = chatLog.scrollHeight; // Scroll to the bottom
+        });
+    </script>
+</body>
+</html>
